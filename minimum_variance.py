@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 from scipy.optimize import minimize
 
@@ -76,8 +77,10 @@ print("투자 비중 합계:", round(optimal_weights.sum(), 6))
 print("최소분산 포트폴리오 연율화 변동성:", round(optimal_volatility * 100, 2), "%")
 
 #두 포트폴리오의 투자 비중 비교표
-comparison = pd. DataFrame({"Equal Weight": weights,"Minimum Variance": optimal_weights},
-index=returns.columns)
+comparison = pd. DataFrame({
+    "Equal Weight": weights,
+    "Minimum Variance": optimal_weights
+    }, index=returns.columns)
 
 print("\n===투자 비중 비교 ===")
 print((comparison * 100).round(2))
@@ -86,3 +89,31 @@ print((comparison * 100).round(2))
 comparison.to_csv("results/portfolio_weights.csv")
 
 print("투자 비중 비교표 저장 완료!")
+
+#첫번째 그래프 - ETF별 투자 비중 비교 그래프
+comparison.plot(kind="bar", figsize=(10, 5))
+
+plt.title("Portfolio Weight Comparison")
+plt.ylabel("Portfolio Weight")
+plt.xlabel("ETF")
+plt.xticks(rotation=0)
+plt.tight_layout()
+
+plt.savefig("results/portfolio_weights.png", dpi=300)
+plt.close()
+
+#포트폴리오별 연율화 변동성 비교
+volatility_comparison = pd.Series({
+    "Equal Weight": portfolio_volatility * 100,
+    "Minimum Variance": optimal_volatility * 100
+})
+volatility_comparison.plot(kind="bar", figsize=(8,5))
+plt.title("Annualized Volatility Comparison")
+plt.ylabel("Annualized Volatility (%)")
+plt.xticks(rotation=0)
+plt.tight_layout()
+
+plt.savefig("results/volatility_comparison.png", dpi=300)
+plt.close()
+
+print("그래프 2개 저장 완료!")
